@@ -9,6 +9,7 @@ namespace PrayerTimesAPIV2
     {
         private IPResponse? ip = JsonSerializer.Deserialize<IPResponse>(DownloadString("https://ipapi.co/json/"));
 
+        #region API Funcs
         public List<Datum> PrayerTimesForYear_Month(int year, int month, calculationMethods calculationMethods, shafaq shafaq, school school, midnightMode midnightMode, latitudeAdjustmentMethod latitudeAdjustmentMethod, bool iso8601Output)
         {
             string shafaqParsed = "general";
@@ -72,14 +73,15 @@ namespace PrayerTimesAPIV2
                     break;
             }
 
-            string response = DownloadString($"http://api.aladhan.com/v1/calendar/{DateTime.Now.Year}/{DateTime.Now.Month}?latitude={ip.latitude}&longitude={ip.longitude}&method={calculationMethods}&shafaq={shafaqParsed}&school={school}&midnightMode={midnightMode}&latitudeAdjustmentMethod={latitudeAdjustmentMethod}&iso8601={iso8601Output.ToString().ToLower()}");
-
-            prayerTimeResponse? resp = JsonSerializer.Deserialize<prayerTimeResponse>(response);
             DateTime dt;
             DateTime.TryParseExact(day, "d/M/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+
+            string response = DownloadString($"http://api.aladhan.com/v1/calendar/{dt.Year}/{dt.Month}?latitude={ip.latitude}&longitude={ip.longitude}&method={calculationMethods}&shafaq={shafaqParsed}&school={school}&midnightMode={midnightMode}&latitudeAdjustmentMethod={latitudeAdjustmentMethod}&iso8601={iso8601Output.ToString().ToLower()}");
+
+            prayerTimeResponse? resp = JsonSerializer.Deserialize<prayerTimeResponse>(response);
             return resp.data.Where(x => x.date.gregorian.date == dt.ToString("dd-MM-yyyy")).First().timings;
         }
-
+        #endregion
 
         #region Misc Method
         private static string DownloadString(string Url)
