@@ -15,6 +15,7 @@
 
 - Way way way more portable than the old version of PrayerTimesAPI
 
+- Uses a better API
 
 ## Example
 
